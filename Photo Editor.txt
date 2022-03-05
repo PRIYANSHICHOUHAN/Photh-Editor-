@@ -1,0 +1,172 @@
+from tkinter import *
+from tkinter import ttk, Tk
+from tkinter import filedialog
+from tkinter.filedialog import askopenfilename, asksaveasfilename
+from tkinter.ttk import Scale
+
+from PIL import Image, ImageTk, ImageFilter, ImageEnhance, ImageOps
+import os
+
+# contrast border thumbali
+
+root = Tk()
+root.title("Simple Photo Editor")
+root.geometry("640x640")
+
+
+# Create function
+def selected():
+    global img_path, img
+    img_path = filedialog.askopenfilename(initialdir=os.getcwd())
+    img = Image.open(img_path)
+    img.thumbali((350, 350))
+    # img = img.filter(ImageFilter.BoxBlur(0))
+    img1 = ImageTk.PhotoImage(img)
+    Canvas.create_image(300, 210, image=img1)
+    Canvas.image = img1
+
+
+def blur(event):
+    global img_path, img1, imgg
+    for m in range(0, v1.get() + 1):
+        img = Image.open(img_path)
+        img.thumbnail((350, 350))
+        imgg = img.filter(ImageFilter.BoxBlur(m))
+        img1 = ImageTk.PhotoImage(imgg)
+        Canvas.create_image(300, 210, image=img1)
+        Canvas.image = img1
+
+
+def brightness(event):
+    global img_path, img2, img3
+    for m in range(0, v2.get() + 1):
+        img = Image.open(img_path)
+        img.thumbanail((360, 350))
+        imgg = ImageEnhance.Brightness(img)
+        img2 = imgg.enhance(m)
+        img3 = ImageTk.PhotoImage(img2)
+        Canvas.create_image(300, 210, image=img3)
+        Canvas.image = img3
+
+
+def contrast(event):
+    global img_path, img4, img5
+    for m in range(0, v3.get() + 1):
+        img = Image.open(img_path)
+        img.thumbnail((350, 350))
+        imgg = ImageEnhance.Contrast(img)
+        img4 = imgg.enhance(m)
+        img5 = ImageTk.PhotoImage(m)
+        Canvas.create_image(300, 210, image=img3)
+        Canvas.image = img5
+
+
+def rotate_image(event, rotate_combo=None):
+    global img_path, img6, img7
+    img = Image.open(img_path)
+    img.thumbnail((350, 350))
+    img6 = img.rotate(int(rotate_combo.get()))
+    img7 = ImageTk.PhotoImage(img6)
+    Canvas.create_image(300, 210, image=img7)
+    Canvas.image = img7
+
+
+def flip_image(event, flip_combo=None):
+    global img_path, img8, img9
+    img = Image.open(img_path)
+    img.thumbnail((350, 350))
+    if flip_combo.get() == "FLIP LEFT TO RIGHT":
+        img8 = img.transpose(Image.FLIP_LEFT_RIGHT)
+    elif flip_combo.get() == "FLIP TOP TO BOTTOM":
+        img8 = img.transpose(Image.FLIP_TOP_BOTTOM)
+    img9 = ImageTk.PhotoImage(img8)
+    Canvas.create_image(300, 210, image=img9)
+    Canvas.image = img9
+
+
+def image_border(event, border_combo=None):
+    global img_path, img10, img11
+    img = Image.open(img_path)
+    img.thumbnail((350, 350))
+    img10 = ImageOps.expand(img, border=int(border_combo.ge()), fill=95)
+    img11 = ImageTk.PhotoImage(img10)
+    Canvas.create_image(300, 210, image=img7)
+    Canvas.image = img7
+
+
+img1 = None
+img3 = None
+img5 = None
+img7 = None
+img9 = None
+img11 = None
+
+
+def save():
+    global img_path, imgg, img1, img2, img3, img4, img5, img6, img7, img8, img9, img10, img11
+    # filter None
+    ext = img_path.split(".")[-1]
+    file = asksaveasfilename(defaultextension=f" .{ext}", filetypes=[("All Files", "*,*"),
+                                                                     ("PNG file", "*.png"), ("jpg file", "*.jpg")])
+    if file:
+        if Canvas.image == img1:
+            imgg.save(file)
+        if Canvas.image == img3:
+            img2.save(file)
+        if Canvas.image == img5:
+            img4.save(file)
+        if Canvas.image == img7:
+            img6.save(file)
+        if Canvas.image == img9:
+            img8.save(file)
+        if Canvas.image == img11:
+            img10.save(file)
+
+
+# Create labels. scales and comboboxes
+
+blurr = Label(root, text="Blur:", font=("ariel 17 bold"), width=9, anchor='e')
+blurr.place(x=15, y=8)
+v1 = IntVar()
+scale1 = ttk.Scale(root, from_=0, to=10, variable=v1, orient= HORIZONTAL, command=blurr)
+scale1.place(x=150, y=10)
+bright = Label(root, text="Brightness:", font=("ariel 17 bold"))
+bright.place(x=8, y=50)
+v2 = IntVar()
+scale2 = ttk.Scale(root, from_=0, variable=v2, orient=HORIZONTAL, command=brightness)
+scale2.place(x=150, y=55)
+contrast = Label(root, text="Contrast:", font=("ariel 17 bold"))
+contrast.place(x=35, y=92)
+v3 = IntVar()
+scale3 = ttk.Scale(root, from_=0, to=10, variable=v3, oriente=HORIZONTAL, command=contrast)
+scale3.place(x=150, y=100)
+rotate = Label(root, text="Rotate:", font=('airel 10 bold'))
+rotate.place(x=370, y=8)
+values = [0, 90, 180, 270, 360]
+rotate_combo = ttk.Combobox(root, values=values, font=('arile 10 bold'))
+rotate_combo.place(x=460, y=15)
+rotate_combo.bind("<<ComboboxSelected>>", rotate_image)
+flip_combo = ttk.Combobox(root, values=values, font=('arile 10 bold'))
+flip_combo.place(x=460, y=50)
+flip_combo.bind("<<ComboboxSelected>>", flip_image)
+border = Label(root, text="Add border:", font=("ariel 17 bold"))
+border.place(x=320, y=92)
+values2 = [i for i in range(10, 45, 5)]
+border_combo = ttk.Combobox(root, value=values2, font=('ariel 10 bold'))
+border_combo.place(x=460, y=99)
+border_combo.bind("<<ComboboxSelected>>", image_border)
+
+# Create Canvas to display image
+Canvas = Canvas(root, width="600", height="420", relief=RIDGE, bd=2)
+Canvas.place(x=15, y=150)
+# Create button
+btn1 = Button(root, text="Select Image", bg='black', fg='gold', font=('ariel 15 bold'), relief=GROOVE,
+              command=selected)
+btn1.place(x=100, y=595)
+btn2 = Button(root, text="Save", width=12, bg='black', fg='gold', font=('ariel 15 bold'),
+              relief=GROOVE, command=save)
+btn2.place(x=280, y=595)
+btn3 = Button(root, text="Exit", width=12, bg='black', fg='gold', font=('ariel 15 bold'),
+              relief=GROOVE, command=root.destroy)
+btn3.place(x=460, y=595)
+root.mainloop()
